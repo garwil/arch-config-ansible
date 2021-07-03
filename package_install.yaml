@@ -1,0 +1,35 @@
+---
+- hosts: all
+  roles:
+  - kewlfft.aur
+  tasks:
+    # Create a user for installing AUR packages (can't be done as root)
+    - name: 'Create AUR Builder'
+      user:
+        name: 'aur_builder'
+        create_home: false
+        group: 'wheel'
+
+    - name: 'Configure sudo permissions for aur_builder'
+      lineinfile:
+        path: '/etc/sudoers.d/11-install-aur_builder'
+        line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+        create: true
+        validate: 'visudo -cf %s'
+
+    - name: 'Install paru'
+      aur:
+        name: 'paru'
+        use: 'makepkg'
+        state: 'present'
+      become: true
+      become_user: 'aur_builder'
+
+    - name: 'Install all packages with paru'
+      aur:
+        name: '{{ aur_packages }}'
+        use: 'paru'
+        state: 'present'
+      become: true
+      become_user: 'aur_builder'
+

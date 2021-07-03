@@ -1,0 +1,1 @@
+aur_packages: "{{ lookup('file', 'laptop_aur_packages.list', errors='strict').splitlines() }}"
