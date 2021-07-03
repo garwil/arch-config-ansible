@@ -1,0 +1,7 @@
+all:
+  hosts:
+    laptop:
+      ansible_connection: local
+    desktop:
+      ansible_connection: local
+
