@@ -19,7 +19,6 @@ btrfs-progs
 c-lolcat
 cbonsai
 cloc
-diff-so-fancy
 diskonaut
 dragon-drag-and-drop
 duf
@@ -39,6 +38,7 @@ fwupd
 fzf
 gcc
 git
+git-delta
 glow
 gotop
 gping
@@ -53,6 +53,7 @@ kubectl
 libtool
 linux
 linux-firmware
+lostfiles
 lua
 lua-format
 m4
@@ -78,6 +79,7 @@ openssh
 openvpn
 openvpn-update-systemd-resolved
 p7zip
+pacutils
 paru
 patch
 pkgconf
