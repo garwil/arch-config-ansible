@@ -45,6 +45,7 @@ gping
 groff
 helm
 httpie
+imagemagick
 imwheel
 intel-ucode
 jq
@@ -94,6 +95,8 @@ reflector
 remind
 ripgrep
 rsync
+ruby
+rustup
 sudo
 task
 tealdeer

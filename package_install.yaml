@@ -4,11 +4,14 @@
   - kewlfft.aur
   tasks:
     # Create a user for installing AUR packages (can't be done as root)
-    - name: 'Create AUR Builder'
+    - name: 'Create AUR Builder user'
       user:
         name: 'aur_builder'
-        create_home: false
+        create_home: true
         group: 'wheel'
+        shell: '/usr/bin/nologin'
+        state: 'present'
+      become: true
 
     - name: 'Configure sudo permissions for aur_builder'
       lineinfile:
@@ -16,6 +19,47 @@
         line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
         create: true
         validate: 'visudo -cf %s'
+      become: true
+
+    - name: 'Gather facts for AUR Builder user'
+      setup:
+      become: true
+      become_user: '{{ aur_user }}'
+
+    - name: 'Create .gnupg directory'
+      file:
+        path: '{{ ansible_user_dir }}/.gnupg'
+        state: 'directory'
+        mode: '0755'
+      become: true
+      become_user: '{{ aur_user }}'
+
+    - name: 'Set GPG server'
+      lineinfile:
+        path: '{{ ansible_user_dir }}/.gnupg/gpg.conf'
+        line: 'keyserver keyserver.ubuntu.com'
+        create: true
+      become: true
+      become_user: '{{ aur_user }}'
+
+    - name: 'Install rustup'
+      pacman:
+        name: 'rustup'
+        state: 'present'
+      become: true
+
+    - name: 'Install rustup toolchain'
+      shell: 'rustup toolchain install stable'
+      become: true
+      become_user: '{{ aur_user }}'
+
+    - name: 'Set default rustup toolchain'
+      shell: 'rustup default stable'
+      become: true
+      become_user: '{{ aur_user }}'
+
+    - name: 'Gather facts for current user'
+      setup:
 
     - name: 'Install paru'
       aur:
@@ -23,7 +67,7 @@
         use: 'makepkg'
         state: 'present'
       become: true
-      become_user: 'aur_builder'
+      become_user: '{{ aur_user }}'
 
     - name: 'Install all packages with paru'
       aur:
@@ -31,5 +75,5 @@
         use: 'paru'
         state: 'present'
       become: true
-      become_user: 'aur_builder'
+      become_user: '{{ aur_user }}'
 
